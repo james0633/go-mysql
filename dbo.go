@@ -1,4 +1,4 @@
-package dbi
+package dbo
 
 import (
     "strings"
@@ -6,11 +6,11 @@ import (
     _ "github.com/go-sql-driver/mysql"
 )
 
-var db *sql.DB
+var MyDB *sql.DB
 
-//insert new record to table
-func insert(query string, args ...interface{}) (int64, error) {
-    stmt, err := db.Prepare(query)
+//add new record to table
+func Add(query string, args ...interface{}) (int64, error) {
+    stmt, err := MyDB.Prepare(query)
     if err != nil {
         panic(err.Error())
     }
@@ -24,8 +24,8 @@ func insert(query string, args ...interface{}) (int64, error) {
 }
 
 //execute commands
-func exe(query string, args ...interface{}) (int64, error) {
-    stmt, err := db.Prepare(query)
+func Exe(query string, args ...interface{}) (int64, error) {
+    stmt, err := MyDB.Prepare(query)
     if err != nil {
         panic(err.Error())
     }
@@ -39,11 +39,11 @@ func exe(query string, args ...interface{}) (int64, error) {
 }
 
 //get one record from query result
-func row(query string, args ...interface{}) (*map[string]string, error) {
+func Row(query string, args ...interface{}) (*map[string]string, error) {
     if !strings.Contains(strings.ToUpper(query), "LIMIT") {
         query += " LIMIT 1"
     }
-    stmt, err := db.Prepare(query)
+    stmt, err := MyDB.Prepare(query)
     if err != nil {
         panic(err.Error())
     }
@@ -88,8 +88,8 @@ func row(query string, args ...interface{}) (*map[string]string, error) {
 }
 
 //get all records from query result
-func query(query string, args ...interface{}) (*[]map[string]string, error) {
-    stmt, err := db.Prepare(query)
+func All(query string, args ...interface{}) (*[]map[string]string, error) {
+    stmt, err := MyDB.Prepare(query)
     if err != nil {
         panic(err.Error())
     }
@@ -133,4 +133,3 @@ func query(query string, args ...interface{}) (*[]map[string]string, error) {
     }
     return &ret, nil
 }
-
