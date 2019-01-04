@@ -1,6 +1,7 @@
 package dbi
 
 import (
+    "strings"
     "database/sql"
     _ "github.com/go-sql-driver/mysql"
 )
@@ -39,6 +40,9 @@ func exe(query string, args ...interface{}) (int64, error) {
 
 //get one record from query result
 func row(query string, args ...interface{}) (*map[string]string, error) {
+    if !strings.Contains(strings.ToUpper(query), "LIMIT") {
+        query += " LIMIT 1"
+    }
     stmt, err := db.Prepare(query)
     if err != nil {
         panic(err.Error())
@@ -119,7 +123,7 @@ func query(query string, args ...interface{}) (*[]map[string]string, error) {
         vmap := make(map[string]string, len(scanArgs))
         for i, col := range values {
             if col == nil {
-                value = "NULL"
+                value = "" // or NULL
             } else {
                 value = string(col)
             }
