@@ -39,7 +39,7 @@ func Exe(query string, args ...interface{}) (int64, error) {
 }
 
 //get one record from query result
-func Row(query string, args ...interface{}) (*map[string]string, error) {
+func Row(query string, args ...interface{}) (map[string]string, error) {
     if !strings.Contains(strings.ToUpper(query), "LIMIT") {
         query += " LIMIT 1"
     }
@@ -84,11 +84,11 @@ func Row(query string, args ...interface{}) (*map[string]string, error) {
         }
         break //get the first row only
     }
-    return &ret, nil
+    return ret, nil
 }
 
 //get all records from query result
-func All(query string, args ...interface{}) (*[]map[string]string, error) {
+func All(query string, args ...interface{}) ([]map[string]string, error) {
     stmt, err := MyDB.Prepare(query)
     if err != nil {
         panic(err.Error())
@@ -131,5 +131,5 @@ func All(query string, args ...interface{}) (*[]map[string]string, error) {
         }
         ret = append(ret, vmap)
     }
-    return &ret, nil
+    return ret, nil
 }
