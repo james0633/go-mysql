@@ -8,10 +8,10 @@ Requires Go >= 1.10 and MySQL >= 4.1
 
 ### functions
 
-* `insert` insert a new record
+* `add` insert a new record
 * `exe` update of delete
-* `row` get a record from result
-* `query` get full result from query
+* `row` get one record from result
+* `all` get all result from query
 
 
 ### Parameters
@@ -21,7 +21,23 @@ Requires Go >= 1.10 and MySQL >= 4.1
 
 ### Examples
 
-    var new_id int32 = dbi.insert("INSERT INTO test( b ) VALUES( ? )", 1)
+    dbo.MyDB, err = sql.Open("mysql", config.MysqlDSN)
+    if err != nil {
+        panic(err.Error())
+    }
+    //defer dbo.MyDB.Close()
+    dbo.MyDB.SetMaxOpenConns(config.MysqlMaxConn)
+    dbo.MyDB.SetMaxIdleConns(config.MysqlMaxIdle)
+    dbo.MyDB.Ping()
+    
+    var new_id int32 = dbo.add("INSERT INTO test( b ) VALUES( ? )", 1)
+    
+    row, err := dbo.Row("SELECT * FROM testA WHERE id=?", 2019)
+    if err != nil {
+        panic(err.Error())
+    } else {
+        fmt.Println("find record: ", row["id"])
+    }
 
 
 ## Notes
@@ -50,11 +66,11 @@ automatically converted by the MySQL server as needed.
     import (
         "database/sql"
         _ "github.com/go-sql-driver/mysql"
-        _ "github.com/james0633/go-mysql"
+        "github.com/james0633/go-mysql"
     )
 
     func main() {
-        db, err := sql.Open("mysql", "mysql://gotest:gomysql@localhost/test")
+        dbo.MyDB, err := sql.Open("mysql", "mysql://gotest:gomysql@localhost/test")
         ...
     }
 
