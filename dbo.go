@@ -20,7 +20,7 @@ func Add(query string, args ...interface{}) (int64, error) {
     if err != nil {
         return 0, err
     }
-    return result.LastInsertId(), nil
+    return result.LastInsertId()
 }
 
 //execute commands
@@ -35,7 +35,7 @@ func Exe(query string, args ...interface{}) (int64, error) {
     if err != nil {
         return 0, err
     }
-    return result.RowsAffected(), nil
+    return result.RowsAffected()
 }
 
 //get one record from query result
