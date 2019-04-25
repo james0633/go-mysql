@@ -12,30 +12,30 @@ var MyDB *sql.DB
 func Add(query string, args ...interface{}) (int64, error) {
     stmt, err := MyDB.Prepare(query)
     if err != nil {
-        panic(err.Error())
+        return 0, err
     }
     defer stmt.Close()
 
     result, err := stmt.Exec(args...)
     if err != nil {
-        panic(err.Error())
+        return 0, err
     }
-    return result.LastInsertId()
+    return result.LastInsertId(), nil
 }
 
 //execute commands
 func Exe(query string, args ...interface{}) (int64, error) {
     stmt, err := MyDB.Prepare(query)
     if err != nil {
-        panic(err.Error())
+        return 0, err
     }
     defer stmt.Close()
 
     result, err := stmt.Exec(args...)
     if err != nil {
-        panic(err.Error())
+        return 0, err
     }
-    return result.RowsAffected()
+    return result.RowsAffected(), nil
 }
 
 //get one record from query result
@@ -45,19 +45,19 @@ func Row(query string, args ...interface{}) (map[string]string, error) {
     }
     stmt, err := MyDB.Prepare(query)
     if err != nil {
-        panic(err.Error())
+        return nil, err
     }
     defer stmt.Close()
 
     rows, err := stmt.Query(args...)
     if err != nil {
-        panic(err.Error())
+        return nil, err
     }
     defer rows.Close()
 
     columns, err := rows.Columns()
     if err != nil {
-        panic(err.Error())
+        return nil, err
     }
 
     values := make([]sql.RawBytes, len(columns))
@@ -70,7 +70,7 @@ func Row(query string, args ...interface{}) (map[string]string, error) {
     for rows.Next() {
         err = rows.Scan(scanArgs...)
         if err != nil {
-            panic(err.Error())
+            break
         }
         var value string
 
@@ -84,26 +84,26 @@ func Row(query string, args ...interface{}) (map[string]string, error) {
         }
         break //get the first row only
     }
-    return ret, nil
+    return ret, err
 }
 
 //get all records from query result
 func All(query string, args ...interface{}) ([]map[string]string, error) {
     stmt, err := MyDB.Prepare(query)
     if err != nil {
-        panic(err.Error())
+        return nil, err
     }
     defer stmt.Close()
 
     rows, err := stmt.Query(args...)
     if err != nil {
-        panic(err.Error())
+        return nil, err
     }
     defer rows.Close()
 
     columns, err := rows.Columns()
     if err != nil {
-        panic(err.Error())
+        return nil, err
     }
 
     values := make([]sql.RawBytes, len(columns))
@@ -117,7 +117,7 @@ func All(query string, args ...interface{}) ([]map[string]string, error) {
     for rows.Next() {
         err = rows.Scan(scanArgs...)
         if err != nil {
-            panic(err.Error())
+            break
         }
         var value string
         vmap := make(map[string]string, len(scanArgs))
@@ -131,5 +131,5 @@ func All(query string, args ...interface{}) ([]map[string]string, error) {
         }
         ret = append(ret, vmap)
     }
-    return ret, nil
+    return ret, err
 }
